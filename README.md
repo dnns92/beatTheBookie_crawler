@@ -8,7 +8,7 @@ betting. I never tested it enough for that. Use it for fun paper-betting. Use of
 This repository contains code and further links that one can use to get suggestions for a betting strategy.
 If you are sports betting and decide to test the strategy or use it on real betting, bear in mind that you are doing it 
 under your own risk and responsibility. 
-I do not claim any responsiblity for: A) the use that you might make of our code, 
+I do not claim any responsiblity for: A) the use that you might make of the code, 
 B) the information you find here or 
 C) any monetary losses you might incur during your betting experience.
 
