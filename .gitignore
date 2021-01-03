@@ -140,5 +140,11 @@ cython_debug/
 # do not save logfiles
 *.log
 *.html
-beatTheBookie_crawler/crawler/bets/*.json
+
 .idea/*
+
+# do not add data directories
+beatTheBookie_crawler/crawler/matches/
+beatTheBookie_crawler/crawler/bets/
+beatTheBookie_crawler/crawler/logs/
+beatTheBookie_crawler/crawler/profitables/
