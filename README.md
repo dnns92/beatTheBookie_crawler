@@ -2,6 +2,7 @@
 
 Read this paper to get to know the method https://arxiv.org/abs/1710.02824. This repo should not be used for real money
 betting. I never tested it enough for that. Use it for fun paper-betting. Use of this repo is always on your own risk.
+Also give the authors of the original paper some appreciation: https://github.com/Lisandro79/BeatTheBookie
 
 
 # Disclaimer
