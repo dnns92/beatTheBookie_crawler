@@ -1,0 +1,47 @@
+{
+  "soccer": {
+    "England": [
+      "https://www.wettportal.com/Fussball/England/Premier_League/",
+      "https://www.wettportal.com/Fussball/England/Championship/",
+      "https://www.wettportal.com/Fussball/England/League_1/",
+      "https://www.wettportal.com/Fussball/England/League_2/"
+  ],
+    "Germany": [
+      "https://www.wettportal.com/Fussball/Deutschland/Bundesliga/",
+      "https://www.wettportal.com/Fussball/Deutschland/2_Bundesliga/"
+    ],
+    "Turkey": [
+      "https://www.wettportal.com/Fussball/Türkei/Super_Lig/"
+    ],
+    "France": [
+      "https://www.wettportal.com/Fussball/Frankreich/Ligue_1/"
+    ],
+    "Spain": [
+      "https://www.wettportal.com/Fussball/Spanien/La_Liga/",
+      "https://www.wettportal.com/Fussball/Spanien/Segunda_Division/"
+    ],
+    "Netherlands": [
+      "https://www.wettportal.com/Fussball/Holland/Eredivisie/"
+    ],
+    "Italy": [
+      "https://www.wettportal.com/Fussball/Italien/Serie_A/",
+      "https://www.wettportal.com/Fussball/Italien/Serie_B/"
+    ],
+    "Austria": [
+      "https://www.wettportal.com/Fussball/Österreich/Bundesliga/"
+    ],
+    "Europe": [
+      "https://www.wettportal.com/Fussball/Champions_League/",
+      "https://www.wettportal.com/Fussball/UEFA_Europe_League/"
+    ],
+    "Australia": [
+      "https://www.wettportal.com/Fussball/Australien/A-League/"
+    ],
+    "Brazil": [
+      "https://www.wettportal.com/Fussball/Brasilien/Serie_A/"
+    ],
+    "Switzerland": [
+      "https://www.wettportal.com/Fussball/Schweiz/"
+    ]
+  }
+}
