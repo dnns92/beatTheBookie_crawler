@@ -2,24 +2,28 @@ import json
 import time
 import requests
 from datetime import datetime
+from glob import glob
+import os
 
 import regex as re
 from bs4 import BeautifulSoup
 
 from beatTheBookie_crawler.utils.robots import RobotsTxtError
-from .crawler_constants import FRIENDLY_TIMER
+from .crawler_constants import FRIENDLY_TIMER, Result
 from beatTheBookie_crawler.utils.misc import create_timestring
+
 
 class Crawler:
     def __init__(self, robots_checker=None):
         """Base Class for MatchCrawler and BetCrawler
         TODO: implement more functionality here and less in the specific crawlers"""
         self.robots_checker = robots_checker
+        self.pull_time_string, self.pull_time = self.create_timestring()
 
-    def check_allowed(self, league_link):
-        allowed = self.robots_checker.can_fetch(league_link)
+    def check_allowed(self, link):
+        allowed = self.robots_checker.can_fetch(link)
         if not allowed:
-            raise RobotsTxtError(league_link)
+            raise RobotsTxtError(link)
 
     @staticmethod
     def create_timestring():
@@ -28,14 +32,14 @@ class Crawler:
 
 
 class MatchCrawler(Crawler):
-    def __init__(self, robots_checker, config, save_htmls: bool = False):
+    def __init__(self, robots_checker, config, save_htmls: bool = False, return_filename=False):
         """
         TODO: make MatchCrawler more testable
         """
         super(MatchCrawler, self).__init__(robots_checker)
         self.config = json.load(open(config, "r", encoding='utf-8'))
-        self.pull_time_string = create_timestring()
         self.save_htmls = save_htmls
+        self.return_filename = return_filename
         self.database = {}
 
     def crawl(self):
@@ -52,7 +56,9 @@ class MatchCrawler(Crawler):
                 if country not in self.database.keys():
                     self.database[country] = []
                 self.database[country].extend(links)
-        self.save_crawling_results()
+        filename = self.save_crawling_results()
+        if self.return_filename is True:
+            return filename
 
     def log_html(self, country, league_link, request):
         html_filename = f"crawler/logs/{country}_{self.pull_time_string}_{league_link.split('/')[-2]}.html"
@@ -79,11 +85,13 @@ class MatchCrawler(Crawler):
         return links
 
     def save_crawling_results(self):
+        filename = f"crawler/matches/{self.pull_time_string}.json"
         json.dump(self.database,
-                  open(f"crawler/matches/{self.pull_time_string}.json", "w", encoding="utf-8"),
+                  open(filename, "w", encoding="utf-8"),
                   indent=4,
                   sort_keys=True
                   )
+        return filename
 
 
 class BetCrawler(Crawler):
@@ -91,7 +99,6 @@ class BetCrawler(Crawler):
         """crawls bets and odds from the crawled matches """
         super(BetCrawler, self).__init__(robots_checker)
         self.match_links = json.load(open(matchfile, "r", encoding="utf-8"))
-        self.pull_time_string, self.pull_time = self.create_timestring()
         self.current_link = None
         self.bet_extractor = bet_extractor
 
@@ -113,12 +120,6 @@ class BetCrawler(Crawler):
                 if odds is not None:
                     filename = self.create_filename(home_club, away_club, game_datetime)
                     json.dump(odds, open(filename, "w", encoding="utf-8"), indent=4, sort_keys=True)
-                # try:
-                #     odds = self.extract_3_way_match_table(request.text)   #
-                # except IndexError:   #
-                #     print(f"Cannot crawl {match}")   #
-                #     continue   #
-
 
     @staticmethod
     def has_started(game_time, pull_time):
@@ -147,22 +148,47 @@ class BetCrawler(Crawler):
         dirpath = "crawler/bets"
         return f"{dirpath}/{dt}_{hc}_{ac}.json"
 
-# add Odds class
-# class Odds:
-#     def __init__(self, game, last_pull):
-#         self.bookie = None
-#         self.game = game
-#         self.last_pull = last_pull
-#         self.bookie_odds = {}
-#
-#     def add_bookie(self, bookie, odds):
-#         self.bookie_odds[bookie] = odds
-#
-#     def create_filename(self): pass
-#
-#     def save(self):
-#         saving = {"bookie": self.bookie, "game": self.game, "last_pull": self.last_pull, "bookies": self.bookie_odds}
-#         json.dump(saving, open(filename, "w", encoding="utf-8"), indent=4, sort_keys=True)
+
+class ResultCrawler(Crawler):
+    def __init__(self, robots_checker, base_dir, target_dir):
+        super(ResultCrawler, self).__init__(robots_checker)
+        self.base_dir = base_dir
+        self.target_dir = target_dir
+        self.files = glob(os.path.join(base_dir, "*.json"))
+
+    def crawl(self):
+        for file in self.files:
+            print(f"--- READING {file} ---")
+            profitable = json.load(open(file, "r", encoding='utf-8'))
+            for game_link in profitable:
+                time.sleep(FRIENDLY_TIMER)
+                self.check_allowed(game_link)
+                request = requests.request("get", game_link)
+                soup = BeautifulSoup(request.text, "html.parser")
+                if self.check_has_ended(soup):
+                    score = self.get_score(soup)
+                    profitable[game_link]["best_odds"]["score"] = score
+                    filename = f"{self.target_dir}/results_{self.pull_time_string}.json"
+                    json.dump(profitable,
+                              open(filename, "w", encoding="utf-8"),
+                              indent=4,
+                              sort_keys=True
+                              )
+
+    @staticmethod
+    def check_has_ended(soup):
+        minute = soup.find_all("span", class_="minute")
+        if minute:
+            if minute[0] == "Beendet":
+                return True
+        return False
+
+    @staticmethod
+    def get_score(soup):
+        result = soup.find_all("span", class_="score")
+        home, away = result[0].split(":")
+        home, away = int(home), int(away)
+        return Result.eval_score(home, away)
 
 
 class ThreeWayBetExtractor:

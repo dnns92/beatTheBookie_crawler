@@ -6,5 +6,5 @@ from beatTheBookie_crawler.crawler.robotsChecker import WettPortalComRobotsCheck
 
 if __name__ == '__main__':
     checker = WettPortalComRobotsChecker()
-    bc = BetCrawler(checker, ThreeWayBetExtractor, r"crawler\matches\Sun_Jan__3_10_35_38_2021.json")
+    bc = BetCrawler(checker, ThreeWayBetExtractor, r"crawler\matches\Sun_Jan__3_17_59_20_2021.json")
     bc.crawl()

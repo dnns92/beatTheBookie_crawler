@@ -6,14 +6,25 @@ import numpy as np
 from beatTheBookie_crawler.crawler.crawler_constants import BET_SAFETY_MARGIN
 
 
+class InvalidOddWarning(Warning):
+    def __init__(self, match):
+        """ throw this if the robots.txt does not allow to crawl a website you wanted."""
+        self.match = match
+        super().__init__(self.match)
+
+    def __str__(self):
+        return f'cannot evaluate {self.match}'
+
+
 class ProbabilitiesFrom3WayOdds:
     def __init__(self, safety_margin=BET_SAFETY_MARGIN):
         self.safety_margin = safety_margin
         self.translator = FileAdapter
+        self.results = {}
 
-    def evaluate_jsons(self, glob_pattern) -> dict:
+    def evaluate_jsons(self, glob_pattern) -> None:
         files = glob(glob_pattern)
-        profitable_bets = {}
+        self.results = {}
         for file in files:
             game_odds = self.translator(file).translate()
             avg_odds, best_bookies, max_odds = self.bookie_statistics(game_odds)
@@ -29,9 +40,7 @@ class ProbabilitiesFrom3WayOdds:
                 match = self.translator(file).get_current_match()
                 print("-" * 10 + f"I found a profitable Bet in file {file}: {bookie}: {best_odd}-{contestor}" + "-" * 10)
                 game_odds["best_odds"] = [bookie, best_odd, contestor]
-                profitable_bets[match] = game_odds
-
-        return profitable_bets
+                self.results[match] = game_odds
 
     def estimated_profits(self, avg_odds: np.ndarray, max_odds: np.ndarray):
         return (1/avg_odds - self.safety_margin) * max_odds
@@ -61,6 +70,7 @@ class ProbabilitiesFrom3WayOdds:
                 best_bookies[2] = bookie
             sum_home_draw_away += np.array(odd)
             ctr += 1
+        ctr = 0 if ctr == 0 else ctr  # prevent inf cases
         avg_odds = sum_home_draw_away / ctr
         return avg_odds, best_bookies, max_odds
 
@@ -74,6 +84,13 @@ class ProbabilitiesFrom3WayOdds:
         index = np.argmax(odds, axis=0)
         bet_type = "home" * int(odds[index] == home) + "draw" * int(odds[index] == draw) + "away" * int(odds[index] == away)
         return odds[index], bookies[index], bet_type
+
+    def dump(self, time_string):
+        json.dump(self.results,
+                  open(f"crawler/profitables/{time_string}.json", "w", encoding="utf-8"),
+                  indent=4,
+                  sort_keys=True
+                  )
 
 
 class FileAdapter:
