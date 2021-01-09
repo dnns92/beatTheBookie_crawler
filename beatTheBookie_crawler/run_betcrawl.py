@@ -1,4 +1,3 @@
-import json
 from beatTheBookie_crawler.crawler.crawler import BetCrawler
 from beatTheBookie_crawler.crawler.crawler import ThreeWayBetExtractor
 from beatTheBookie_crawler.crawler.robotsChecker import WettPortalComRobotsChecker

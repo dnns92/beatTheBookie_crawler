@@ -12,6 +12,8 @@ from beatTheBookie_crawler.utils.robots import RobotsTxtError
 from .crawler_constants import FRIENDLY_TIMER, Result
 from beatTheBookie_crawler.utils.misc import create_timestring
 
+from beatTheBookie_crawler.dirs import BET_DIR, MATCH_DIR, PROFITABLE_DIR, LOG_DIR
+
 
 class Crawler:
     def __init__(self, robots_checker=None):
@@ -61,7 +63,7 @@ class MatchCrawler(Crawler):
             return filename
 
     def log_html(self, country, league_link, request):
-        html_filename = f"crawler/logs/{country}_{self.pull_time_string}_{league_link.split('/')[-2]}.html"
+        html_filename = f"{LOG_DIR}/{country}_{self.pull_time_string}_{league_link.split('/')[-2]}.html"
         with open(html_filename, "w", encoding="utf-8") as f:
             f.write(request.text)
         f.close()
@@ -85,7 +87,7 @@ class MatchCrawler(Crawler):
         return links
 
     def save_crawling_results(self):
-        filename = f"crawler/matches/{self.pull_time_string}.json"
+        filename = f"{MATCH_DIR}/{self.pull_time_string}.json"
         json.dump(self.database,
                   open(filename, "w", encoding="utf-8"),
                   indent=4,
@@ -145,8 +147,7 @@ class BetCrawler(Crawler):
         dt = datetime.replace(":", "_").replace(" ", "_").replace(".", "_")
         hc = home_club.replace(" ", "_")
         ac = away_club.replace(" ", "_")
-        dirpath = "crawler/bets"
-        return f"{dirpath}/{dt}_{hc}_{ac}.json"
+        return f"{BET_DIR}/{dt}_{hc}_{ac}.json"
 
 
 class ResultCrawler(Crawler):
