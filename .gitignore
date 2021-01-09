@@ -143,6 +143,9 @@ cython_debug/
 
 .idea/*
 
+# do not add dirs but create locally
+beatTheBookie_crawler/dirs.py
+
 # do not add data directories
 beatTheBookie_crawler/crawler/matches/
 beatTheBookie_crawler/crawler/bets/

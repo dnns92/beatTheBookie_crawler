@@ -32,7 +32,7 @@ class Crawler:
 
 
 class MatchCrawler(Crawler):
-    def __init__(self, robots_checker, config, save_htmls: bool = False, return_filename=False):
+    def __init__(self, robots_checker, config, save_htmls: bool=False, return_filename=False):
         """
         TODO: make MatchCrawler more testable
         """

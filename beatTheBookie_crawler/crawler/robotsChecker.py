@@ -1,5 +1,4 @@
 import urllib.robotparser
-
 from beatTheBookie_crawler.crawler.crawler_constants import ROBOTSTXT
 
 
