@@ -175,12 +175,14 @@ class ResultCrawler(Crawler):
                               indent=4,
                               sort_keys=True
                               )
+                else:
+                    print("Game has not endet yet")
 
     @staticmethod
     def check_has_ended(soup):
         minute = soup.find_all("span", class_="minute")
         if minute:
-            if minute[0] == "Beendet":
+            if "Beendet" in minute[0].text:
                 return True
         return False
 

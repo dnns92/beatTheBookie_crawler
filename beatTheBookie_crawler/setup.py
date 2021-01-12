@@ -18,10 +18,10 @@ if __name__ == '__main__':
     check_dirs([crawler_dir, bet_dir, match_dir, profitable_dir, paperbet_dir, log_dir])
 
     with open("dirs.py", "w") as f:
-        f.write(f"CRAWLER_DIR = '{crawler_dir}'\n")
-        f.write(f"BET_DIR = '{bet_dir}'\n")
-        f.write(f"MATCH_DIR = '{match_dir}'\n")
-        f.write(f"PROFITABLE_DIR = '{profitable_dir}'\n")
-        f.write(f"PAPERBET_DIR = '{paperbet_dir}'\n")
-        f.write(f"LOG_DIR = '{log_dir}'\n")
+        f.write(f"CRAWLER_DIR = r'{crawler_dir}'\n")
+        f.write(f"BET_DIR = r'{bet_dir}'\n")
+        f.write(f"MATCH_DIR = r'{match_dir}'\n")
+        f.write(f"PROFITABLE_DIR = r'{profitable_dir}'\n")
+        f.write(f"PAPERBET_DIR = r'{paperbet_dir}'\n")
+        f.write(f"LOG_DIR = r'{log_dir}'\n")
     f.close()
